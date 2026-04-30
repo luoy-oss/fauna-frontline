@@ -1,20 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGame } from "@/lib/store";
 import { GameState } from "@/lib/types";
+import { isEmptyRow } from "@/lib/game";
 
 interface CellView {
   rank?: number;
   owner?: number;
   faceUp: boolean;
   exists: boolean;
+  killCount?: number;
+  skillUsed?: number;
 }
 
 function buildBoardView(game: GameState): CellView[][] {
-  return game.board.map((row) =>
+  return game.board.map((row, r) =>
     row.map((cell) => {
+      if (isEmptyRow(r)) return { exists: false, faceUp: false };
       if (!cell) return { exists: false, faceUp: false };
       if (cell.faceUp) {
-        return { rank: cell.rank, owner: cell.owner, faceUp: true, exists: true };
+        return {
+          rank: cell.rank,
+          owner: cell.owner,
+          faceUp: true,
+          exists: true,
+          killCount: cell.killCount,
+          skillUsed: cell.skillUsed,
+        };
       }
       return { faceUp: false, exists: true };
     })

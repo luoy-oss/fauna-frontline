@@ -120,11 +120,24 @@ export default function Lobby() {
         <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
           <h2 className="text-lg font-semibold mb-3">游戏规则</h2>
           <ul className="text-sm text-slate-300 space-y-1.5">
-            <li>• 4×7 棋盘，28 枚棋子（每方 14 枚）暗置</li>
+            <li>• 6×7 棋盘，中间两行为空，28 枚棋子暗置</li>
+            <li>• 暗棋未知归属，翻面后才可见</li>
             <li>• 棋子大小：🐘象 &gt; 🦁狮 &gt; 🐅虎 &gt; 🐆豹 &gt; 🐺狼 &gt; 🐕狗 &gt; 🐱猫 &gt; 🐀鼠</li>
-            <li>• 每回合：翻开任意一枚暗棋、移动一格、或吃一枚棋子</li>
+            <li>• 每回合：翻开任意暗棋、移动一格、或吃子</li>
             <li>• 同级吃子：双方同归于尽</li>
             <li>• 吃光对方所有棋子即可获胜</li>
+          </ul>
+
+          <h3 className="text-md font-semibold mt-4 mb-2">技能系统</h3>
+          <ul className="text-sm text-slate-300 space-y-1.5">
+            <li>🐘 <b>象</b>：死亡时周围 8 格所有棋子一起死亡</li>
+            <li>🦁 <b>狮</b>：（限 1 次）吃掉 1-2 个比自己小的棋子，然后换人</li>
+            <li>🐅 <b>虎</b>：行动后可与相邻比自己大的棋子同归于尽</li>
+            <li>🐆 <b>豹</b>：（限 2 次）移动时可跳过一格空格</li>
+            <li>🐺 <b>狼</b>：每吃 2 个棋子可升一阶（最多升 2 阶，升阶后无技能）</li>
+            <li>🐕 <b>狗</b>：与狼机制相同</li>
+            <li>🐱 <b>猫</b>：行动前后可对角线捕杀老鼠并移动到该位置</li>
+            <li>🐀 <b>鼠</b>：（限 3 次）可以吃暗棋</li>
           </ul>
         </div>
       </div>

@@ -15,6 +15,8 @@ export interface Piece {
   rank: PieceRank;
   owner: 1 | 2;
   faceUp: boolean;
+  killCount: number;
+  skillUsed: number;
 }
 
 export type Cell = Piece | null;
@@ -22,6 +24,13 @@ export type Cell = Piece | null;
 export type Board = Cell[][];
 
 export type GamePhase = "waiting" | "playing" | "finished";
+
+export type SkillAction =
+  | "lion_skill"
+  | "tiger_skill"
+  | "leopard_skill"
+  | "cat_skill"
+  | "rat_skill";
 
 export interface GameState {
   id: string;
@@ -34,10 +43,24 @@ export interface GameState {
   createdAt: number;
 }
 
-export const ROWS = 4;
+export const ROWS = 6;
 export const COLS = 7;
 export const PLAYER_PIECE_COUNT = 14;
 
 export function getPieceInfo(rank: PieceRank) {
   return PIECES.find((p) => p.rank === rank)!;
+}
+
+export function getSkillName(rank: PieceRank): string {
+  switch (rank) {
+    case 8: return "死亡爆炸";
+    case 7: return "猎杀";
+    case 6: return "同归";
+    case 5: return "突进";
+    case 4: return "升级";
+    case 3: return "升级";
+    case 2: return "捕鼠";
+    case 1: return "食暗";
+    default: return "";
+  }
 }
