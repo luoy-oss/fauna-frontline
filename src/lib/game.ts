@@ -290,11 +290,14 @@ export function applySkill(
       if (!toR || toC === undefined)
         return { ok: false, error: "Missing target" };
 
+      const target = board[toR][toC];
+      if (!target || !target.faceUp || target.owner === player || target.rank <= tiger.rank)
+        return { ok: false, error: "Invalid target" };
+
       const validTargets = getTigerTargets(board, fromR, fromC, player);
       if (!validTargets.some(([r, c]) => r === toR && c === toC))
         return { ok: false, error: "Invalid target" };
 
-      const target = board[toR][toC]!;
       if (target.rank === 8) {
         resolveElephantDeath(board, toR, toC);
         board[fromR][fromC] = null;
