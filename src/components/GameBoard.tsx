@@ -58,11 +58,17 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
     } catch {}
   }, [gameId, playerNumber]);
 
+  // 自适应轮询：不是自己回合时才轮询（800ms），自己回合不轮询
   useEffect(() => {
     fetchGame();
-    const interval = setInterval(fetchGame, 2000);
+    const isMyTurn = game?.currentPlayer === playerNumber;
+    const isFinished = game?.phase === "finished";
+
+    if (isMyTurn || isFinished) return;
+
+    const interval = setInterval(fetchGame, 800);
     return () => clearInterval(interval);
-  }, [fetchGame]);
+  }, [fetchGame, game?.currentPlayer, game?.phase, playerNumber]);
 
   const get4Neighbors = (r: number, c: number): [number, number][] => {
     return [[-1, 0], [1, 0], [0, -1], [0, 1]]
@@ -303,9 +309,9 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       if (!res.ok) {
         setError(data.error);
       } else {
+        if (data.state) setGame(data.state);
         clearSkillMode();
         clearSelection();
-        await fetchGame();
       }
     } catch {
       setError("网络错误");
@@ -358,8 +364,8 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       if (!res.ok) {
         setError(data.error);
       } else {
+        if (data.state) setGame(data.state);
         clearSelection();
-        await fetchGame();
       }
     } catch {
       setError("网络错误");

@@ -1,7 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGame, saveGame } from "@/lib/store";
 import { applyMove, applySkill } from "@/lib/game";
-import { SkillAction } from "@/lib/types";
+import { SkillAction, GameState } from "@/lib/types";
+import { isEmptyRow } from "@/lib/game";
+
+interface CellView {
+  rank?: number;
+  owner?: number;
+  faceUp: boolean;
+  exists: boolean;
+  killCount?: number;
+  skillUsed?: number;
+}
+
+function buildBoardView(game: GameState): CellView[][] {
+  return game.board.map((row, r) =>
+    row.map((cell) => {
+      if (isEmptyRow(r)) return { exists: false, faceUp: false };
+      if (!cell) return { exists: false, faceUp: false };
+      if (cell.faceUp) {
+        return {
+          rank: cell.rank,
+          owner: cell.owner,
+          faceUp: true,
+          exists: true,
+          killCount: cell.killCount,
+          skillUsed: cell.skillUsed,
+        };
+      }
+      return { faceUp: false, exists: true };
+    })
+  );
+}
 
 export async function POST(
   req: NextRequest,
@@ -40,5 +70,18 @@ export async function POST(
   }
 
   await saveGame(result.game);
-  return NextResponse.json({ ok: true, events: result.events });
+
+  const board = buildBoardView(result.game);
+  return NextResponse.json({
+    ok: true,
+    events: result.events,
+    state: {
+      id: result.game.id,
+      board,
+      currentPlayer: result.game.currentPlayer,
+      phase: result.game.phase,
+      winner: result.game.winner,
+      playerNumber: player,
+    },
+  });
 }
