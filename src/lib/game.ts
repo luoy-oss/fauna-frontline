@@ -6,7 +6,6 @@ import {
   PieceRank,
   ROWS,
   COLS,
-  PLAYER_PIECE_COUNT,
   PIECES,
 } from "./types";
 
@@ -123,8 +122,6 @@ export function applyMove(
   if (action === "flip") {
     const piece = board[fromR][fromC];
     if (!piece) return { ok: false, error: "No piece at position" };
-    if (piece.owner !== player)
-      return { ok: false, error: "Cannot flip opponent's piece" };
     if (piece.faceUp) return { ok: false, error: "Piece is already face up" };
     piece.faceUp = true;
   } else if (action === "move") {

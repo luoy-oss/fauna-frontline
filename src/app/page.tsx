@@ -122,7 +122,7 @@ export default function Lobby() {
           <ul className="text-sm text-slate-300 space-y-1.5">
             <li>• 4×7 棋盘，28 枚棋子（每方 14 枚）暗置</li>
             <li>• 棋子大小：🐘象 &gt; 🦁狮 &gt; 🐅虎 &gt; 🐆豹 &gt; 🐺狼 &gt; 🐕狗 &gt; 🐱猫 &gt; 🐀鼠</li>
-            <li>• 每回合：翻开一枚暗棋、移动一格、或吃一枚棋子</li>
+            <li>• 每回合：翻开任意一枚暗棋、移动一格、或吃一枚棋子</li>
             <li>• 同级吃子：双方同归于尽</li>
             <li>• 吃光对方所有棋子即可获胜</li>
           </ul>

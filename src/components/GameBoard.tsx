@@ -100,11 +100,7 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
 
     // 点击暗棋 - 翻开
     if (!cell.faceUp) {
-      if (cell.owner === playerNumber) {
-        await makeMove("flip", r, c);
-      } else {
-        setError("不能翻开对手的棋子");
-      }
+      await makeMove("flip", r, c);
       return;
     }
 
@@ -165,15 +161,8 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
   const getCellDisplay = (cell: CellView, r: number, c: number) => {
     if (!cell.exists) return null;
     if (!cell.faceUp) {
-      if (cell.owner === playerNumber) {
-        return (
-          <div className="w-full h-full bg-teal-800 rounded flex items-center justify-center border-2 border-teal-600">
-            <span className="text-2xl">❓</span>
-          </div>
-        );
-      }
       return (
-        <div className="w-full h-full bg-slate-700 rounded flex items-center justify-center border-2 border-slate-600">
+        <div className="w-full h-full bg-slate-700 rounded flex items-center justify-center border-2 border-slate-500 hover:border-slate-400 transition-colors">
           <span className="text-2xl">❓</span>
         </div>
       );
@@ -276,12 +265,8 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       {/* 图例 */}
       <div className="flex gap-4 text-xs text-slate-400">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-teal-800 border border-teal-600 rounded" />
-          <span>己方暗棋</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-slate-700 border border-slate-600 rounded" />
-          <span>敌方暗棋</span>
+          <div className="w-3 h-3 bg-slate-700 border border-slate-500 rounded" />
+          <span>暗棋（未知）</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-amber-900/50 border border-amber-500 rounded" />

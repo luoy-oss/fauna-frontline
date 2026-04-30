@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGame } from "@/lib/store";
-import { GameState, Piece } from "@/lib/types";
+import { GameState } from "@/lib/types";
 
 interface CellView {
   rank?: number;
@@ -9,15 +9,12 @@ interface CellView {
   exists: boolean;
 }
 
-function buildBoardView(game: GameState, player: number): CellView[][] {
+function buildBoardView(game: GameState): CellView[][] {
   return game.board.map((row) =>
     row.map((cell) => {
       if (!cell) return { exists: false, faceUp: false };
       if (cell.faceUp) {
         return { rank: cell.rank, owner: cell.owner, faceUp: true, exists: true };
-      }
-      if (cell.owner === player) {
-        return { owner: cell.owner, faceUp: false, exists: true };
       }
       return { faceUp: false, exists: true };
     })
@@ -36,7 +33,7 @@ export async function GET(
     return NextResponse.json({ error: "Game not found" }, { status: 404 });
   }
 
-  const board = buildBoardView(game, player);
+  const board = buildBoardView(game);
 
   return NextResponse.json({
     id: game.id,
