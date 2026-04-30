@@ -176,7 +176,8 @@ export function applyMove(
     if (!target) return { ok: false, error: "No piece at target" };
     if (target.owner === player) return { ok: false, error: "Cannot capture own piece" };
     if (!target.faceUp) return { ok: false, error: "Target is face down" };
-    if (piece.rank < target.rank)
+    const canCapture = piece.rank >= target.rank || (piece.rank === 1 && target.rank === 8);
+    if (!canCapture)
       return { ok: false, error: "Cannot capture a stronger piece" };
     const adj = get4Neighbors(fromR, fromC);
     if (!adj.some(([r, c]) => r === toR && c === toC))

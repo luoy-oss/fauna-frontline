@@ -94,7 +94,8 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       if (!cell.exists) {
         moves.push([nr, nc]);
       } else if (cell.faceUp && cell.owner !== playerNumber && piece.rank !== undefined) {
-        if (piece.rank >= (cell.rank ?? 0)) {
+        const targetRank = cell.rank ?? 0;
+        if (piece.rank >= targetRank || (piece.rank === 1 && targetRank === 8)) {
           captures.push([nr, nc]);
         }
       }
