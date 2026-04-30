@@ -230,6 +230,12 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
   const handleSkillTargetClick = async (r: number, c: number) => {
     if (!skillMode) return;
 
+    // 点击技能源棋子本身 - 取消技能
+    if (r === skillMode.fromR && c === skillMode.fromC) {
+      clearSkillMode();
+      return;
+    }
+
     if (skillMode.skill === "lion_skill") {
       // 狮技能：多选目标
       const idx = skillTargets.findIndex(([tr, tc]) => tr === r && tc === c);
@@ -239,19 +245,24 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
         const valid = getLionTargets(skillMode.fromR, skillMode.fromC);
         if (valid.some(([vr, vc]) => vr === r && vc === c) && skillTargets.length < 2) {
           setSkillTargets([...skillTargets, [r, c]]);
+        } else {
+          // 点击非目标位置 - 取消技能
+          clearSkillMode();
+          setError("");
         }
       }
       return;
     }
 
     // 单选目标技能
-    let toR = r, toC = c;
     const valid = getSkillValidTargets(skillMode.skill, skillMode.fromR, skillMode.fromC);
     if (!valid.some(([vr, vc]) => vr === r && vc === c)) {
-      setError("无效的目标");
+      // 点击非目标位置 - 取消技能
+      clearSkillMode();
+      setError("");
       return;
     }
-    await executeSkill([[toR, toC]]);
+    await executeSkill([[r, c]]);
   };
 
   const getSkillValidTargets = (skill: SkillAction, r: number, c: number): [number, number][] => {
@@ -474,19 +485,27 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
         </div>
       )}
 
-      {/* 狮技能确认 */}
-      {skillMode?.skill === "lion_skill" && (
+      {/* 技能操作面板 */}
+      {skillMode && (
         <div className="flex gap-2 items-center">
-          <span className="text-sm text-slate-400">
-            已选 {skillTargets.length}/2 个目标
-          </span>
-          <button
-            onClick={confirmLionSkill}
-            disabled={skillTargets.length === 0}
-            className="px-3 py-1 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-600 rounded text-sm transition-colors"
-          >
-            确认猎杀
-          </button>
+          {skillMode.skill === "lion_skill" ? (
+            <>
+              <span className="text-sm text-slate-400">
+                已选 {skillTargets.length}/2 个目标
+              </span>
+              <button
+                onClick={confirmLionSkill}
+                disabled={skillTargets.length === 0}
+                className="px-3 py-1 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-600 rounded text-sm transition-colors"
+              >
+                确认猎杀
+              </button>
+            </>
+          ) : (
+            <span className="text-sm text-purple-400">
+              请点击高亮目标格，或点击空白处/源棋子取消
+            </span>
+          )}
           <button
             onClick={clearSkillMode}
             className="px-3 py-1 bg-slate-600 hover:bg-slate-500 rounded text-sm transition-colors"
