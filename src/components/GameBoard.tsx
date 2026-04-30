@@ -81,13 +81,13 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
   const handleCellClick = async (r: number, c: number) => {
     if (!game || game.phase !== "playing" || loading) return;
     if (game.currentPlayer !== playerNumber) {
-      setError("Not your turn");
+      setError("还没到你的回合");
       return;
     }
 
     const cell = game.board[r][c];
 
-    // Click on empty cell - move if valid
+    // 点击空格 - 移动
     if (!cell.exists) {
       if (selected && validMoves.some(([mr, mc]) => mr === r && mc === c)) {
         await makeMove("move", selected[0], selected[1], r, c);
@@ -98,17 +98,17 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       return;
     }
 
-    // Click on face-down piece - flip if mine
+    // 点击暗棋 - 翻开
     if (!cell.faceUp) {
       if (cell.owner === playerNumber) {
         await makeMove("flip", r, c);
       } else {
-        setError("Cannot flip opponent's piece");
+        setError("不能翻开对手的棋子");
       }
       return;
     }
 
-    // Click on my face-up piece - select
+    // 点击己方明棋 - 选中
     if (cell.owner === playerNumber) {
       setSelected([r, c]);
       computeValidMoves(r, c);
@@ -116,7 +116,7 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
       return;
     }
 
-    // Click on opponent's face-up piece - capture if valid
+    // 点击敌方明棋 - 吃子
     if (selected && validCaptures.some(([cr, cc]) => cr === r && cc === c)) {
       await makeMove("capture", selected[0], selected[1], r, c);
     }
@@ -157,7 +157,7 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
         await fetchGame();
       }
     } catch {
-      setError("Network error");
+      setError("网络错误");
     }
     setLoading(false);
   };
@@ -202,18 +202,18 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
   const isCellSelected = (r: number, c: number) =>
     selected && selected[0] === r && selected[1] === c;
 
-  if (!game) return <div className="text-center p-8">Loading...</div>;
+  if (!game) return <div className="text-center p-8">加载中...</div>;
 
   const isMyTurn = game.currentPlayer === playerNumber;
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Status bar */}
+      {/* 状态栏 */}
       <div className="w-full max-w-xl flex items-center justify-between px-4">
         <div className="text-sm">
-          <span className="text-slate-400">You are </span>
+          <span className="text-slate-400">你是</span>{" "}
           <span className={playerNumber === 1 ? "text-amber-400" : "text-red-400"}>
-            Player {playerNumber}
+            玩家 {playerNumber}
           </span>
         </div>
         {game.phase === "playing" && (
@@ -224,12 +224,12 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
                 : "bg-slate-700 text-slate-400"
             }`}
           >
-            {isMyTurn ? "Your Turn" : "Opponent's Turn"}
+            {isMyTurn ? "你的回合" : "对手回合"}
           </div>
         )}
         {game.phase === "waiting" && (
           <div className="px-3 py-1 rounded text-sm bg-yellow-900/50 text-yellow-400">
-            Waiting for opponent...
+            等待对手加入...
           </div>
         )}
         {game.phase === "finished" && (
@@ -240,12 +240,12 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
                 : "bg-red-900/50 text-red-400"
             }`}
           >
-            {game.winner === playerNumber ? "You Win!" : "You Lose!"}
+            {game.winner === playerNumber ? "你赢了！" : "你输了！"}
           </div>
         )}
       </div>
 
-      {/* Board */}
+      {/* 棋盘 */}
       <div className="inline-grid gap-1 p-3 bg-slate-800 rounded-xl border border-slate-700"
         style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}
       >
@@ -273,27 +273,27 @@ export default function GameBoard({ gameId, playerNumber, playerId }: Props) {
         )}
       </div>
 
-      {/* Legend */}
+      {/* 图例 */}
       <div className="flex gap-4 text-xs text-slate-400">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-teal-800 border border-teal-600 rounded" />
-          <span>Your hidden</span>
+          <span>己方暗棋</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-slate-700 border border-slate-600 rounded" />
-          <span>Enemy hidden</span>
+          <span>敌方暗棋</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-amber-900/50 border border-amber-500 rounded" />
-          <span>Your piece</span>
+          <span>己方明棋</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 bg-red-900/50 border border-red-500 rounded" />
-          <span>Enemy piece</span>
+          <span>敌方明棋</span>
         </div>
       </div>
 
-      {/* Error message */}
+      {/* 错误信息 */}
       {error && (
         <div className="px-4 py-2 bg-red-900/30 border border-red-700 rounded text-red-400 text-sm">
           {error}

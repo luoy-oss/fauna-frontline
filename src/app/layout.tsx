@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fauna Frontline",
-  description: "Animal battle strategy game",
+  title: "兽阵前线",
+  description: "动物对战策略游戏",
 };
 
 export default function RootLayout({
